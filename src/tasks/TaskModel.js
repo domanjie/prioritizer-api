@@ -1,8 +1,9 @@
+import { ObjectId } from "mongodb"
 import { dbClient } from "../infra/MongoDb.js"
 
-export const persistTask = (task) => {
+export const persistTask = async (task) => {
   let clientId = "domanjie@gmail.com"
-  dbClient
+  await dbClient
     .db("prioritizerdb")
     .collection("tasks")
     .insertOne({ ...task, userId: clientId })
@@ -19,4 +20,11 @@ export const getClientTasks = async () => {
     })
   const returnVal = await x.toArray()
   return returnVal
+}
+export const deleteTask = async (_id) => {
+  let clientId = "domanjie@gmail.com"
+  await dbClient
+    .db("prioritizerdb")
+    .collection("tasks")
+    .deleteOne({ _id: new ObjectId(_id), userId: clientId })
 }

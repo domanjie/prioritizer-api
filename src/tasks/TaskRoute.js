@@ -1,20 +1,17 @@
 import e from "express"
-import { persistTask, getClientTasks } from "./TaskModel.js"
+import { persistTask, getClientTasks, deleteTask } from "./TaskModel.js"
 const taskRouter = e.Router()
 
 taskRouter
   .route("/")
-  .post((req, res) => {
+  .post(async (req, res) => {
     const task = req.body
-    persistTask(task)
+    await persistTask(task)
     res.send("tasks successfully added")
   })
-  .get(async (req, res) =>
-    res.send(JSON.stringify({ tasks: await getClientTasks() }))
-  )
-
-taskRouter
-  .route(":/id")
-  .delete((req, res) => {})
-  .put((req, res) => {})
+  .get(async (req, res) => res.send(JSON.stringify(await getClientTasks())))
+taskRouter.route("/:id").delete(async (req, res) => {
+  await deleteTask(req.params.id)
+  res.send("tasks successfully deleted")
+})
 export { taskRouter }

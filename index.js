@@ -1,10 +1,12 @@
 import express, { json } from "express"
 import { taskRouter } from "./src/tasks/TaskRoute.js"
 import cors from "cors"
+import session from "express-session"
 
 const app = express()
 
 //configurations
+
 app.use(
   cors({
     origin: " http://localhost:5173",
@@ -14,8 +16,15 @@ app.use(
   })
 )
 app.use(json())
+
+app.use(
+  session({
+    secret: "secret",
+  })
+)
+
 app.use("/api/v1/task", taskRouter)
 
 app.listen(3000, () => {
-  console.log(`server running on http://localhost:3000 `)
+  console.log("server running on http://localhost:3000 ")
 })
