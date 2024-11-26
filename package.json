@@ -4,7 +4,7 @@
   "type": "module",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon --env-file=./.env index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,8 +14,9 @@
     "cors": "^2.8.5",
     "express": "^4.21.0",
     "express-session": "^1.18.1",
-    "googleapis": "^144.0.0",
-    "mongodb": "^6.9.0"
+    "google-auth-library": "^9.14.2",
+    "mongodb": "^6.9.0",
+    "uuid": "^11.0.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"
