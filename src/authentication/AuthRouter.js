@@ -9,11 +9,15 @@ authRouter.route("/logout").get(function (req, res, next) {
     res.sendStatus(200)
   })
 })
-authRouter.route("/sign-in").post(async (req, res) => {
-  const payload = await verify(req.body.idToken)
-  let user = await fetchUserById(payload["email"])
-  if (!user) {
-    user = await addNewUser({ _id: payload["email"] })
+authRouter.route("/sign-in").post(async (req, res, next) => {
+  try {
+    const payload = await verify(req.body.idToken)
+    let user = await fetchUserById(payload["email"])
+    if (!user) {
+      user = await addNewUser({ _id: payload["email"] })
+    }
+  } catch (error) {
+    next(error)
   }
   req.session.regenerate(function (err) {
     if (err) next(err)

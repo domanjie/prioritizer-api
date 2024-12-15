@@ -1,13 +1,25 @@
 import express, { json } from "express"
-import { taskRouter } from "./src/tasks/TaskRoute.js"
+import { taskRouter } from "./src/taskQueue/TaskQueueRoute.js"
 import cors from "cors"
 import session from "express-session"
 import { fetchUserById } from "./src/authentication/AuthModel.js"
 import { authRouter } from "./src/authentication/AuthRouter.js"
 import currentTaskRouter from "./src/currentTask/currentTaskRouter.js"
+import ConnectMongoDBSession from "connect-mongodb-session"
 const app = express()
 
+const MongoDBSession = ConnectMongoDBSession(session)
+const store = new MongoDBSession({
+  uri: process.env.MONGO_DB_URI,
+  collection: "user-session",
+  databaseName: "prioritizerdb",
+})
 //configurations
+
+// Catch errors
+store.on("error", function (error) {
+  console.log(error)
+})
 
 app.use(
   cors({
@@ -26,6 +38,7 @@ app.use(
     resave: false,
     saveUninitialized: true,
     unset: "destroy",
+    store: store,
   })
 )
 

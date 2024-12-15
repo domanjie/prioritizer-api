@@ -1,26 +1,45 @@
-import e, { json } from "express"
-import { dbClient } from "../infra/MongoDb.js"
+import e from "express"
+import {
+  completeCurrentTask,
+  promoteTask,
+  updateCurrentTaskTimer,
+  getUsersCurrentTask,
+} from "./currentTaskModel.js"
 const currentTaskRouter = e.Router()
 
 currentTaskRouter
   .route("/")
   .get(async (req, res) => {
-    const currentTask = await dbClient
-      .db("prioritizerdb")
-      .collection("currentTask")
-      .findOne({ _id: req.session.user._id })
+    const currentTask = await getUsersCurrentTask(req.session.user._id)
     res.send(JSON.stringify(currentTask))
   })
-  .put(async (req, res) => {
-    const filter = { _id: req.session.user._id }
-    console.log(filter)
-    const { taskName, time, priority, createdAt, timer } = req.body
-    const currentTask = { taskName, time, priority, createdAt, timer }
-    console.log(currentTask)
-    await dbClient
-      .db("prioritizerdb")
-      .collection("currentTask")
-      .replaceOne(filter, currentTask, { upsert: true })
-    res.sendStatus(200)
+  .post(async (req, res, next) => {
+    const userId = req.session.user._id
+    try {
+      switch (req.query.action) {
+        case "complete":
+          await completeCurrentTask(userId)
+          res.sendStatus(200)
+          break
+        case "promote":
+          await promoteTask(userId, req.body.taskId)
+          res.sendStatus(200)
+          break
+        default:
+          res.sendStatus(400)
+          break
+      }
+    } catch (error) {
+      next(error)
+    }
+  })
+  .patch(async (req, res, next) => {
+    const timer = req.body
+    try {
+      await updateCurrentTaskTimer(req.session.user._id, timer)
+      res.sendStatus(200)
+    } catch (error) {
+      next(error)
+    }
   })
 export default currentTaskRouter
