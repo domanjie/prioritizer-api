@@ -26,8 +26,8 @@ export const saveUsersCurrentTask = async (userId, currentTask) => {
 export const getUsersCurrentTask = async (userId) => {
   return await db.collection("currentTask").findOne({ userId })
 }
-export const updateCurrentTaskTimer = async (userId, timer) => {
+export const updateCurrentTaskTimer = async (userId, timerState) => {
   await db
     .collection("currentTask")
-    .updateOne({ userId }, { $set: { timer: timer } })
+    .updateOne({ userId }, { $set: { timerState: timerState } })
 }

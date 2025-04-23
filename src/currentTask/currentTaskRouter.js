@@ -34,9 +34,9 @@ currentTaskRouter
     }
   })
   .patch(async (req, res, next) => {
-    const timer = req.body
+    const timerState = req.body
     try {
-      await updateCurrentTaskTimer(req.session.user._id, timer)
+      await updateCurrentTaskTimer(req.session.user._id, timerState)
       res.sendStatus(200)
     } catch (error) {
       next(error)
