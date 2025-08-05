@@ -23,7 +23,7 @@ store.on("error", function (error) {
 
 app.use(
   cors({
-    origin: " http://localhost:5173",
+    origin: process.env.FRONT_END_URI,
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     preflightContinue: false,
     credentials: true,
