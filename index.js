@@ -2,12 +2,11 @@ import express, { json } from "express"
 import { taskRouter } from "./src/taskQueue/TaskQueueRoute.js"
 import cors from "cors"
 import session from "express-session"
-import { fetchUserById } from "./src/authentication/AuthModel.js"
 import { authRouter } from "./src/authentication/AuthRouter.js"
 import currentTaskRouter from "./src/currentTask/currentTaskRouter.js"
 import ConnectMongoDBSession from "connect-mongodb-session"
-const app = express()
 
+const app = express()
 const MongoDBSession = ConnectMongoDBSession(session)
 const store = new MongoDBSession({
   uri: process.env.MONGO_DB_URI,
@@ -45,10 +44,22 @@ app.use(
 app.use("/api/v1/task", authenticate, taskRouter)
 app.use("/api/v1/current", authenticate, currentTaskRouter)
 app.use("/api/v1/auth", authRouter)
-app.listen(3000, () => {
-  console.log("server running on http://localhost:3000 ")
-})
 
+if (process.env.ENVIRONMENT === "prod") {
+  const fs = await import("fs")
+  const https = await import("https")
+  const options = {
+    key: fs.readFileSync(process.env.PATH_TO_PRIVATE_kEY),
+    cert: fs.readFileSync(process.env.PATH_TO_CERTIFICATE),
+  }
+  https.createServer(options, app).listen(3000, () => {
+    console.log("https server running on https://localhost:3000 ")
+  })
+} else {
+  app.listen(3000, () => {
+    console.log("http server running on https://localhost:3000 ")
+  })
+}
 function authenticate(req, res, next) {
   if (req.session.user) {
     next()
