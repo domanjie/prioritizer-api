@@ -49,7 +49,7 @@ if (process.env.ENVIRONMENT === "prod") {
   const fs = await import("fs")
   const https = await import("https")
   const options = {
-    key: fs.readFileSync(process.env.PATH_TO_PRIVATE_kEY),
+    key: fs.readFileSync(process.env.PATH_TO_PRIVATE_KEY),
     cert: fs.readFileSync(process.env.PATH_TO_CERTIFICATE),
   }
   https.createServer(options, app).listen(3000, () => {
