@@ -38,6 +38,13 @@ app.use(
     saveUninitialized: true,
     unset: "destroy",
     store: store,
+    cookie: {
+      path: "/",
+      httpOnly: true,
+      secure: process.env.ENVIRONMENT === "prod",
+      maxAge: 604800000,
+      sameSite: process.env.ENVIRONMENT === "prod" && "none",
+    },
   })
 )
 
